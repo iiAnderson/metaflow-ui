@@ -15,6 +15,7 @@ type ResultGroupFooterProps = {
 
 //
 // Component
+// Footer for groups when grouping is active in runs list.
 //
 
 const ResultGroupFooter: React.FC<ResultGroupFooterProps> = ({ grouping, rows, onOpenGroup }) => {

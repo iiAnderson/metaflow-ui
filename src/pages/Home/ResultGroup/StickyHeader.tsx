@@ -12,6 +12,7 @@ type Props = {
 
 //
 // Component
+// Stick runs list header to top of screen when scrolling.
 //
 
 const StickyHeader: React.FC<Props> = ({ tableRef, children }) => {

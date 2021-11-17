@@ -15,6 +15,7 @@ import { toRelativeSize } from '../../../utils/style';
 
 //
 // Tasklist
+// Rendering all the run tasks like in timeline. Just without timeline section.
 //
 
 type Props = {

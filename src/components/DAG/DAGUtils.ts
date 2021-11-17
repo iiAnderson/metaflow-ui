@@ -43,7 +43,7 @@ export type DAGModelItem = {
 export type DAGModel = Record<string, DAGModelItem>;
 
 //
-// Render dag model object that comes from server to easier to render tree model.
+// Convert dag model object that comes from server to easier to render tree model.
 //
 
 function DAGModelToTree(data: DAGModel, items: string[], breaks: string[], inContainer?: boolean): DAGStructureTree {

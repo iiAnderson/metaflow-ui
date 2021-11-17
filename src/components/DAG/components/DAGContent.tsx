@@ -56,6 +56,7 @@ const DAGContent: React.FC<DAGContentProps> = ({ showFullscreen, dagTree, run, s
 
 export default DAGContent;
 
+// Try to fit graph fully to the view.
 function getGraphScale(
   showFullscreen: boolean,
   ContainerSize: ComponentSize,
@@ -80,6 +81,9 @@ function getGraphScale(
   return 1;
 }
 
+//
+// Render single step of the run and it's children.
+//
 export const RenderStep: React.FC<{
   item: DAGTreeNode;
   isFirst?: boolean;
@@ -157,6 +161,10 @@ export function stateOfStep(item: StepTree, stepData: StepLineData[]): TaskStatu
   }
   return 'unknown';
 }
+
+//
+// When available show docstring in the graph.
+//
 
 const DocstringTooltip: React.FC<{ stepName: string; docs: string }> = ({ stepName, docs }) => {
   const { t } = useTranslation();

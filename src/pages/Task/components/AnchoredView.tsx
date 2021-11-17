@@ -6,6 +6,7 @@ import TaskSection from './TaskSection';
 
 //
 // Anchored View
+// Renders sections with updating menu on the right
 //
 
 type AnchoredViewSection = {

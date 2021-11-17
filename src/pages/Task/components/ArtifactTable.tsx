@@ -16,6 +16,11 @@ import copy from 'copy-to-clipboard';
 type Props = { artifacts: Artifact[]; onOpenContentClick: (artifactName: string, data: string) => void };
 type PopupLink = { artifact: Artifact; variant: ValidLinkVariant };
 
+//
+// Render available artifact data in table. Too big artifact contents are not loaded and fairly big onces can be
+// viewed in popup.
+//
+
 const ArtifactTable: React.FC<Props> = ({ artifacts, onOpenContentClick }) => {
   const { t } = useTranslation();
   const [highlightLink, setHighlightLink] = useState<PopupLink | null>(null);

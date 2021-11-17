@@ -15,6 +15,10 @@ type ResultGroupHeaderProps = {
   clickable: boolean;
 };
 
+//
+// Header labels for runs list group
+//
+
 const ResultGroupHeader: React.FC<ResultGroupHeaderProps> = React.memo(
   ({ handleClick, error, cols, onOrderChange, order, label, clickable }) => (
     <>

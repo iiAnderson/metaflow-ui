@@ -22,6 +22,7 @@ type LogActionBarProps = {
 
 //
 // Component
+// Action buttons for log lists. Each individual loglist has their own action bar
 //
 
 const LogActionBar: React.FC<LogActionBarProps> = ({

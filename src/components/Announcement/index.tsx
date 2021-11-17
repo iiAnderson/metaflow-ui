@@ -11,7 +11,7 @@ import { NotificationType } from '../Notifications';
 import { Announcement as IAnnouncement } from '../../types';
 
 //
-// Render list of announcements which are not shown before
+// Render list of server-side announcements which are not shown before
 //
 const Announcements: React.FC = () => {
   const [seen, setSeen] = useState<string[]>(getSeenAnnouncements());

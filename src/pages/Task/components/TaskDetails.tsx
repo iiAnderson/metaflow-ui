@@ -35,6 +35,10 @@ function makeMetadataString(md: Metadata): string {
   return md.field_name;
 }
 
+//
+// Render task basic details in table and task details plugins after that.
+//
+
 const TaskDetails: React.FC<Props> = ({ task, metadata, metadataResource, developerNote, showMetadata }) => {
   const { t } = useTranslation();
   const { timezone } = useContext(TimezoneContext);

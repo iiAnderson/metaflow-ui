@@ -30,6 +30,8 @@ type ResultGroupCellsProps = {
 
 //
 // Component
+// Cells on single row of runs list. Note that all the cells has <a> element so that native browser actions
+// like open in new tab works.
 //
 
 const ResultGroupCells: React.FC<ResultGroupCellsProps> = React.memo(

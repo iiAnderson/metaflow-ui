@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { HEADER_SIZE_PX } from '../../../constants';
 
 //
-// Anchor menu
+// Anchor menu for task sections
 //
 
 type AnchorItem = {

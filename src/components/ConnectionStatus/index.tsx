@@ -13,6 +13,7 @@ const nowUnixTime = () => Math.floor(new Date().getTime() / 1000);
 
 //
 // Component for showing websocket status on top of the page.
+// Websocket is keeps pinging the server. If we haven't gotten pong for 5min, recommend refreshing to user.
 //
 
 const ConnectionStatus: React.FC = () => {

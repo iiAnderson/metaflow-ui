@@ -16,6 +16,7 @@ type Props = {
 
 //
 // Component
+// Tabs for all task attempts.
 //
 
 const AttemptSelector: React.FC<Props> = ({ tasks, currentAttempt, onSelect }) => {

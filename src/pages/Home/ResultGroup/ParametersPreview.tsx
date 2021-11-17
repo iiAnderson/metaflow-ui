@@ -5,6 +5,10 @@ import useResource from '../../../hooks/useResource';
 import { Run, RunParam } from '../../../types';
 import RunParameterTable from '../../Run/RunParameterTable';
 
+//
+// Parameters section for runs list run preview
+//
+
 const ParametersPreview: React.FC<{ run: Run }> = ({ run }) => {
   const { t } = useTranslation();
   const params = useResource<RunParam, RunParam>({

@@ -6,6 +6,7 @@ import { ItemRow } from '../../Structure';
 
 //
 // DAG control bar
+// Action buttons for DAG.
 //
 
 type DAGControlBarProps = {

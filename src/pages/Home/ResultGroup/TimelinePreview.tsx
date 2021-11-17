@@ -19,6 +19,7 @@ type TimelinePreviewProps = {
 
 //
 // Component
+// Preview of run in runs list. Includes timeline and parameters.
 //
 
 const TimelinePreview: React.FC<TimelinePreviewProps> = ({ run }) => {

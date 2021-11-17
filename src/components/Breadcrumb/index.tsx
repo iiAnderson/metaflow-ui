@@ -16,6 +16,7 @@ import useOnKeyPress from '../../hooks/useOnKeyPress';
 
 //
 // Component
+// Main breadcrumb on AppBar. Path in breadcrumb is Metaflow pathspec :flowid/:runid/:stepname/:taskid (and partials of this)
 //
 
 const Breadcrumb: React.FC = () => {

@@ -13,6 +13,8 @@ type ResultGroupTagsProps = {
 
 //
 // Component
+// Automatically expanding tags field for runs list rows. If more than 3 tags, show only part of them and rest in
+// hover action.
 //
 
 const ResultGroupTags: React.FC<ResultGroupTagsProps> = ({ tags, updateListValue }) => {

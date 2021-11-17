@@ -18,6 +18,7 @@ type ArtifactActionBarProps = {
 
 //
 // Component
+// Actions for artifacts section in task page.
 //
 
 const ArtifactActionBar: React.FC<ArtifactActionBarProps> = ({ name, data }) => {

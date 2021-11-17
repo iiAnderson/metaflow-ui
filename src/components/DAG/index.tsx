@@ -14,6 +14,7 @@ import { StepLineData } from '../Timeline/taskdataUtils';
 
 //
 // DAG
+// Graphical presentation of the flow.
 //
 
 const DAG: React.FC<{ run: Run; steps: StepLineData[]; result: Resource<DAGModel> }> = ({ run, steps, result }) => {
