@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { Log, AsyncStatus, APIError } from '../../types';
 import { DataModel, defaultError } from '../../hooks/useResource';
+import Auth from '@aws-amplify/auth';
+import { Signer } from '@aws-amplify/core';
+import * as urlLib from 'url';
 import { apiHttp } from '../../constants';
+
+// Modified by Aero Technology under the Apache 2.0 License
 
 export type LogItem = Log | 'Loading' | 'Error' | undefined;
 
@@ -61,6 +66,43 @@ const useLogData = ({ preload, paused, url, pagesize }: LogDataSettings): LogDat
 
   const aborter = useRef<AbortController>();
 
+  // Aero Technology: Added ability to sign request based on AWS credentials
+  function signRequest(url: string) {
+    // the urlLib code is adopted from Amplify Rest Client
+    const { search, ...parsedUrl } = urlLib.parse(url, true, true);
+    const formattedUrl = urlLib.format({
+      ...parsedUrl,
+      query: { ...parsedUrl.query },
+    });
+
+    // set your AWS region and service here
+    const serviceInfo = {
+      region: 'eu-west-1',
+      service: 'execute-api',
+    };
+
+    return Auth.currentCredentials()
+      .then((credentials) => {
+        console.log(credentials);
+        return Promise.resolve(credentials);
+      })
+      .then((credentials) => {
+        const params = {
+          method: 'GET',
+          url: formattedUrl,
+        };
+
+        const cred = {
+          secret_key: credentials.secretAccessKey,
+          access_key: credentials.accessKeyId,
+          session_token: credentials.sessionToken,
+        };
+        const signedReq = Signer.sign(params, cred, serviceInfo);
+
+        return Promise.resolve(signedReq);
+      });
+  }
+
   // generic log fetcher
   function fetchLogs(
     page: number,
@@ -79,37 +121,42 @@ const useLogData = ({ preload, paused, url, pagesize }: LogDataSettings): LogDat
     const currentAborter = new AbortController();
     aborter.current = currentAborter;
 
-    return fetch(apiHttp(fullUrl), { signal: currentAborter.signal })
-      .then((response) => response.json())
-      .then((result: DataModel<Log[]> | APIError) => {
-        if (isOkResult(result)) {
-          // Check if there was any new lines. If there wasnt, lets cancel post finish polling.
-          // Or if was postpoll and we didnt get any results
-          if (
-            (result.data.length > 0 && logs.length > 0 && result.data[0].row === logs.length - 1) ||
-            (isPostPoll && result.data.length === 0)
-          ) {
-            setPostPoll(false);
-          }
+    return signRequest(apiHttp(fullUrl)).then((signedRequest) => {
+      console.log('GET: ' + signedRequest.url);
 
-          setLogs((array) => {
-            const newarr = [...array];
-            for (const item of result.data) {
-              newarr[item.row] = item;
+      return fetch(signedRequest.url, { headers: signedRequest.headers, signal: currentAborter.signal })
+        .then((response) => response.json())
+        .then((result: DataModel<Log[]> | APIError) => {
+          if (isOkResult(result)) {
+            // Check if there was any new lines. If there wasnt, lets cancel post finish polling.
+            // Or if was postpoll and we didnt get any results
+            if (
+              (result.data.length > 0 && logs.length > 0 && result.data[0].row === logs.length - 1) ||
+              (isPostPoll && result.data.length === 0)
+            ) {
+              setPostPoll(false);
             }
-            return newarr;
-          });
-          return { type: 'ok' as const, data: result.data };
-        } else {
-          return { type: 'error' as const, error: result };
-        }
-      })
-      .catch((e) => {
-        if (e instanceof DOMException) {
-          return { type: 'error', error: { ...defaultError, id: 'user-aborted' } };
-        }
-        return { type: 'error', error: defaultError };
-      });
+
+            setLogs((array) => {
+              const newarr = [...array];
+              for (const item of result.data) {
+                newarr[item.row] = item;
+              }
+              return newarr;
+            });
+            return { type: 'ok' as const, data: result.data };
+          } else {
+            return { type: 'error' as const, error: result };
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+          if (e instanceof DOMException) {
+            return { type: 'error', error: { ...defaultError, id: 'user-aborted' } };
+          }
+          return { type: 'error', error: defaultError };
+        });
+    });
   }
 
   function fetchPreload() {

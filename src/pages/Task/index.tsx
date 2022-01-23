@@ -36,6 +36,8 @@ import { apiHttp } from '../../constants';
 import useTaskMetadata from './useTaskMetadata';
 import { getTagOfType } from '../../utils/run';
 
+// Modified by Aero Technology under the Apache 2.0 License
+
 //
 // Typedef
 //
@@ -140,7 +142,12 @@ const Task: React.FC<TaskViewProps> = ({
     paused: !task,
   });
 
-  const logUrl = `/flows/${run.flow_id}/runs/${run.run_number}/steps/${stepName}/tasks/${task?.task_id}/logs/`;
+  // Aero Technology: Updated how run_id and task_name are selected
+  const logRunNumber = run.run_id === undefined ? run.run_number : run.run_id;
+  const logTaskId = task?.task_name === null ? task?.task_id : task?.task_name;
+  const logUrl = `/flows/${run.flow_id}/runs/${logRunNumber}/steps/${stepName}/tasks/${logTaskId}/logs/`;
+  console.log('Run ID: ' + logRunNumber);
+  console.log('Task ID' + task?.task_name);
 
   // Stantard out logs
   const stdout = useLogData({

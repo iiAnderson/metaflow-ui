@@ -6,7 +6,11 @@ import useInterval from '../useInterval';
 import { APIError, AsyncStatus } from '../../types';
 import { setLogItem } from '../../utils/debugdb';
 import { logWarning } from '../../utils/errorlogger';
+import Auth from '@aws-amplify/auth';
+import { Signer } from '@aws-amplify/core';
+import * as urlLib from 'url';
 
+// Modified by Aero Technology under the Apache 2.0 License
 //
 // Typedef
 //
@@ -208,60 +212,106 @@ export default function useResource<T, U>({
     logWarning(`HTTP error id: ${err.id}, url: ${targetUrl}`);
   }
 
+  // Aero Technology - signing URLs for access to Aero Platform
+  function signRequest(url: string) {
+    // the urlLib code is adopted from Amplify Rest Client
+    const { search, ...parsedUrl } = urlLib.parse(url, true, true);
+    const formattedUrl = urlLib.format({
+      ...parsedUrl,
+      query: { ...parsedUrl.query },
+    });
+
+    // set your AWS region and service here
+    const serviceInfo = {
+      region: 'eu-west-1',
+      service: 'execute-api',
+    };
+
+    return Auth.currentCredentials()
+      .then((credentials) => {
+        console.log(credentials);
+        return Promise.resolve(credentials);
+      })
+      .then((credentials) => {
+        const params = {
+          method: 'GET',
+          url: formattedUrl,
+        };
+
+        const cred = {
+          secret_key: credentials.secretAccessKey,
+          access_key: credentials.accessKeyId,
+          session_token: credentials.sessionToken,
+        };
+
+        const signedReq = Signer.sign(params, cred, serviceInfo);
+
+        return Promise.resolve(signedReq);
+      });
+  }
+
   function fetchData(targetUrl: string, signal: AbortSignal, cb: (isSuccess: boolean) => void, requestid: number) {
     setLogItem(`GET SENT ${targetUrl}`);
 
-    fetch(targetUrl, { signal })
-      .then((response) => {
-        if (response.status === 200) {
-          response
-            .json()
-            .then((result: DataModel<T>) => {
-              setLogItem(`GET ${response.status} ${targetUrl} ${JSON.stringify(result)}`);
-              // If onUpdate, dont store data in stateful data object
-              if (onUpdate) {
-                onUpdate(result.data as T, result);
-              } else {
-                setData(result.data);
-                setResult(result);
-              }
+    signRequest(targetUrl)
+      .then((signedRequest) => {
+        console.log('GET: ' + signedRequest.url);
+        fetch(signedRequest.url, { headers: signedRequest.headers, signal })
+          .then((response) => {
+            if (response.status === 200) {
+              response
+                .json()
+                .then((result: DataModel<T>) => {
+                  setLogItem(`GET ${response.status} ${targetUrl} ${JSON.stringify(result)}`);
+                  // If onUpdate, dont store data in stateful data object
+                  if (onUpdate) {
+                    onUpdate(result.data as T, result);
+                  } else {
+                    setData(result.data);
+                    setResult(result);
+                  }
 
-              // Trigger postRequest after every request if given.
-              postRequest && postRequest(true, targetUrl, result);
+                  // Trigger postRequest after every request if given.
+                  postRequest && postRequest(true, targetUrl, result);
 
-              // If we want all data and we are have next page available we fetch it.
-              // Else this fetch is done and we call the callback
-              if (fetchAllData && result.links.next !== null && result.links.next !== targetUrl) {
-                fetchData(result.links.next || targetUrl, signal, cb, requestid);
-              } else {
-                cb(true);
-              }
-            })
-            .catch(() => {
-              newError(targetUrl, defaultError, requestid);
-            });
-        } else {
-          response
-            .json()
-            .then((result) => {
-              if (typeof result === 'object' && result.id) {
-                newError(targetUrl, result, requestid);
-              } else if (response.status === 404) {
-                newError(targetUrl, notFoundError, requestid);
-              } else {
-                newError(targetUrl, defaultError, requestid);
-              }
-              postRequest && postRequest(false, targetUrl);
-            })
-            .catch(() => {
-              newError(targetUrl, defaultError, requestid);
-              postRequest && postRequest(false, targetUrl);
-            });
-        }
+                  // If we want all data and we are have next page available we fetch it.
+                  // Else this fetch is done and we call the callback
+                  if (fetchAllData && result.links.next !== null && result.links.next !== targetUrl) {
+                    fetchData(result.links.next || targetUrl, signal, cb, requestid);
+                  } else {
+                    cb(true);
+                  }
+                })
+                .catch(() => {
+                  newError(targetUrl, defaultError, requestid);
+                });
+            } else {
+              response
+                .json()
+                .then((result) => {
+                  if (typeof result === 'object' && result.id) {
+                    newError(targetUrl, result, requestid);
+                  } else if (response.status === 404) {
+                    newError(targetUrl, notFoundError, requestid);
+                  } else {
+                    newError(targetUrl, defaultError, requestid);
+                  }
+                  postRequest && postRequest(false, targetUrl);
+                })
+                .catch(() => {
+                  newError(targetUrl, defaultError, requestid);
+                  postRequest && postRequest(false, targetUrl);
+                });
+            }
+          })
+          .catch((_e) => {
+            newError(targetUrl, defaultError, requestid);
+            postRequest && postRequest(false, targetUrl);
+          });
       })
-      .catch((_e) => {
+      .catch((error) => {
+        console.error(error);
         newError(targetUrl, defaultError, requestid);
-        postRequest && postRequest(false, targetUrl);
       });
   }
 

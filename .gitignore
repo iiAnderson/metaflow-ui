@@ -1,4 +1,5 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+// Modified by Aero Technology under the Apache 2.0 License
 
 # dependencies
 /node_modules
@@ -28,3 +29,6 @@ yarn-error.log*
 /plugin-api/dev/plugins/*
 # except dev-plugin which is used as example
 !/plugin-api/dev/plugins/dev-plugin
+
+# Removed AWS credentials from repo
+aws-exports.js

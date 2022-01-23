@@ -25,12 +25,34 @@ import Announcements from './components/Announcement';
 import { PluginsProvider } from './components/Plugins/PluginManager';
 import HeadlessPluginSlot from './components/Plugins/HeadlessPluginSlot';
 import PluginRegisterSystem from './components/Plugins/PluginRegisterSystem';
+import { ExternalButtonLink } from './components/Button';
+
+// Modified by Aero Technology under the Apache 2.0 License
+
+import Amplify from 'aws-amplify';
+import { CookieStorage } from 'amazon-cognito-identity-js';
+import awsmobile from './aws-exports';
+import Auth from '@aws-amplify/auth';
+
+// Aero Technology: Added cookie based authentication using Amplify
+const domain = 'aeroplatform.co.uk';
+
+console.log(domain);
+
+Amplify.configure({
+  ...awsmobile,
+  Analytics: {
+    disabled: true,
+  },
+  storage: new CookieStorage({ secure: true, domain: domain }),
+});
 
 const App: React.FC = () => {
   const { t } = useTranslation();
   // Features list must be fetched before we render application so we don't render things that
   // are disabled by backend service.
   const [flagsReceived, setFlagsReceived] = useState(false);
+  const [isLoggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
     // Get info about backend versions.
@@ -38,6 +60,19 @@ const App: React.FC = () => {
     // Get info about features that are enabled by server
     fetchFeaturesConfig(() => setFlagsReceived(true));
   }, []);
+
+  Auth.currentSession()
+    .then((_) => {
+      console.log('Logged in!');
+      setLoggedIn(true);
+      return Promise.resolve();
+    })
+    .catch((e) => {
+      console.log('Failed');
+      console.log(e);
+
+      setLoggedIn(false);
+    });
 
   return (
     <ThemeProvider theme={theme}>
@@ -55,7 +90,22 @@ const App: React.FC = () => {
                         <Announcements />
                         <AppBar />
                         <Page>
-                          <Root />
+                          {isLoggedIn ? (
+                            <>
+                              <Root />
+                            </>
+                          ) : (
+                            <>
+                              <ExternalButtonLink
+                                to={'http://site.aeroplatform.co.uk/login'}
+                                tabIndex={0}
+                                data-testid={'home-button'}
+                                variant="primaryText"
+                              >
+                                Login
+                              </ExternalButtonLink>
+                            </>
+                          )}
                         </Page>
                         <Logger />
                       </>
