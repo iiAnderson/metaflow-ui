@@ -143,11 +143,13 @@ const Task: React.FC<TaskViewProps> = ({
   });
 
   // Aero Technology: Updated how run_id and task_name are selected
-  const logRunNumber = run.run_id === undefined ? run.run_number : run.run_id;
+  const logRunNumber = run.run_id === undefined || run.run_id === '' ? run.run_number : run.run_id;
   const logTaskId = task?.task_name === null ? task?.task_id : task?.task_name;
   const logUrl = `/flows/${run.flow_id}/runs/${logRunNumber}/steps/${stepName}/tasks/${logTaskId}/logs/`;
   console.log('Run ID: ' + logRunNumber);
-  console.log('Task ID' + task?.task_name);
+  console.log('Task ID: ' + logTaskId);
+  console.log('run_id: ' + run.run_id + ' run_number: ' + run.run_number);
+  console.log('task_id: ' + task?.task_id + ' run_number: ' + task?.task_name);
 
   // Stantard out logs
   const stdout = useLogData({

@@ -69,6 +69,18 @@ export const ButtonLink: React.FC<Omit<ButtonProps, 'onClick'> & { to: string }>
   );
 };
 
+export const ExternalButtonLink: React.FC<Omit<ButtonProps, 'onClick'> & { to: string }> = ({
+  to,
+  disabled,
+  ...rest
+}) => {
+  return (
+    <StyledButtonLink to={to} style={{ pointerEvents: disabled ? 'none' : 'all' }} target="_blank">
+      <BigButton {...rest} disabled={disabled} onClick={() => null} />
+    </StyledButtonLink>
+  );
+};
+
 //
 // Style
 //
