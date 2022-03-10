@@ -24,7 +24,7 @@ describe('DAG test', () => {
     mount(
       <ThemeProvider theme={theme}>
         <DAG run={run} steps={[]} result={createResource({}, {})} />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
     // Expect to see error here since we don't mock websocket
     cy.get('[data-testid="dag-container-Error"]').should('exist');

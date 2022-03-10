@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { mount } from '@cypress/react';
 import { ThemeProvider } from 'styled-components';
@@ -11,7 +10,7 @@ describe('DAGContent components', () => {
     mount(
       <ThemeProvider theme={theme}>
         <ContainerElement containerType="parallel" />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
     cy.get('[data-testid="dag-parallel-container"]').should('exist');
   });
@@ -20,13 +19,13 @@ describe('DAGContent components', () => {
     mount(
       <ThemeProvider theme={theme}>
         <ContainerElement containerType="foreach" />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
     cy.get('[data-testid="dag-foreach-container"]').should('exist');
   });
 
   it('<RenderStep /> - should render Normalitem', () => {
-   mount(
+    mount(
       <ThemeProvider theme={theme}>
         <RenderStep
           item={{
@@ -57,10 +56,10 @@ describe('DAGContent components', () => {
           stepData={[]}
           run={createRun({})}
         />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
-    cy.get('[data-testid="dag-normalitem"]').should('have.length','2');
+    cy.get('[data-testid="dag-normalitem"]').should('have.length', '2');
     cy.get('[data-testid="dag-normalitem-children').children().should('have.length', '1');
     cy.get('[data-testid="dag-normalitem-box"]').eq(0).contains('start');
     cy.get('[data-testid="dag-normalitem-box"]').eq(1).contains('a');
@@ -78,7 +77,7 @@ describe('DAGContent components', () => {
           stepData={[]}
           run={createRun({})}
         />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     cy.get('[data-testid="dag-parallel-container"]').should('exist');

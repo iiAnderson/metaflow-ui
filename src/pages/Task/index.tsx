@@ -146,6 +146,7 @@ const Task: React.FC<TaskViewProps> = ({
   const logRunNumber = run.run_id === undefined || run.run_id === '' ? run.run_number : run.run_id;
   const logTaskId = task?.task_name === null ? task?.task_id : task?.task_name;
   const logUrl = `/flows/${run.flow_id}/runs/${logRunNumber}/steps/${stepName}/tasks/${logTaskId}/logs/`;
+
   console.log('Run ID: ' + logRunNumber);
   console.log('Task ID: ' + logTaskId);
   console.log('run_id: ' + run.run_id + ' run_number: ' + run.run_number);

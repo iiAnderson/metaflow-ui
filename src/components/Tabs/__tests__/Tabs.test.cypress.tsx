@@ -11,7 +11,7 @@ describe('Tabs test', () => {
     mount(
       <ThemeProvider theme={theme}>
         <Tabs activeTab="" tabs={[]} />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
   });
 
@@ -29,7 +29,7 @@ describe('Tabs test', () => {
             <Tabs activeTab="sndTab" tabs={tabs} />
           </QueryParamProvider>
         </Router>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     cy.get('[data-testid="tab-heading-item"]')
@@ -41,7 +41,7 @@ describe('Tabs test', () => {
           cy.wrap(button)
             .should('have.attr', 'href')
             .then(($href) => {
-              cy.wrap($href).should('include', '/link-to-somewhere')
+              cy.wrap($href).should('include', '/link-to-somewhere');
             });
         }
       });
@@ -55,7 +55,7 @@ describe('Tabs test', () => {
             <Tabs activeTab="fstTab" tabs={tabs} />
           </QueryParamProvider>
         </Router>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
     cy.get('[data-testid="tab-active-content"]').contains('First tab here');
   });

@@ -227,8 +227,9 @@ export default function useResource<T, U>({
       service: 'execute-api',
     };
 
-    return Auth.currentCredentials()
+    return Auth.currentUserCredentials()
       .then((credentials) => {
+        console.log('CURRENT CREDENTIALS ' + JSON.stringify(credentials));
         console.log(credentials);
         return Promise.resolve(credentials);
       })

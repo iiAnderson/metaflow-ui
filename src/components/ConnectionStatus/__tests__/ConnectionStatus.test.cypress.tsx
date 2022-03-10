@@ -28,26 +28,35 @@ describe('ConnectionStatus test', () => {
     mount(
       <ThemeProvider theme={theme}>
         <Router>
-        <QueryParamProvider ReactRouterRoute={Route}>
-          <ConnectionStatus />
-        </QueryParamProvider>
+          <QueryParamProvider ReactRouterRoute={Route}>
+            <ConnectionStatus />
+          </QueryParamProvider>
         </Router>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     // check that the connectionStatus is rendered correctly when the connection is ok
     cy.waitUntil(() => connected).then(() => {
       cy.get('[data-testid="connection-status-wrapper"]').children().eq(0).contains('connection.connected');
-      cy.get('[data-testid="connection-status-wrapper"]').children().eq(1).should('have.css','background-color','rgb(32, 175, 46)');
+      cy.get('[data-testid="connection-status-wrapper"]')
+        .children()
+        .eq(1)
+        .should('have.css', 'background-color', 'rgb(32, 175, 46)');
 
       // check that the connectionStatus is rendered correctly when the connection is closed
       cy.wait(10).then(() => {
         server.close();
         cy.waitUntil(() => !connected).then(() => {
-          cy.get('[data-testid="connection-status-wrapper"]').children().eq(0).contains('connection.waiting-for-connection');
-          cy.get('[data-testid="connection-status-wrapper"]').children().eq(1).should('have.css','background-color','rgb(235, 52, 40)');
+          cy.get('[data-testid="connection-status-wrapper"]')
+            .children()
+            .eq(0)
+            .contains('connection.waiting-for-connection');
+          cy.get('[data-testid="connection-status-wrapper"]')
+            .children()
+            .eq(1)
+            .should('have.css', 'background-color', 'rgb(235, 52, 40)');
         });
-      })
+      });
     });
   });
 });

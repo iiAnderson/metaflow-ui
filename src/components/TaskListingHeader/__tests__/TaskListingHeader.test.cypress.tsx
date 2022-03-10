@@ -89,19 +89,19 @@ describe('TaskListingHeader test', () => {
     mount(
       <ThemeProvider theme={theme}>
         <CollapseButton {...props} />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     cy.get('[data-testid="timeline-collapse-button"]')
       .click()
       .then(() => {
         expect(props.collapse).to.be.calledOnce;
-      }); 
+      });
 
     mount(
       <ThemeProvider theme={theme}>
         <CollapseButton {...props} isAnyGroupOpen={false} />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     cy.get('[data-testid="timeline-collapse-button"]')
